@@ -120,18 +120,20 @@ impl<F: Fn(f32, f32, f32, f32) -> f32> LithophaneGenerator<F> {
 
 		let mut triangles = Vec::with_capacity(num_triangles as usize);
 
+		// Remember that the image origin is top left, so y_i = 0, x_i = 0 is the top left of the image
+
 		// Generate triangles for backing mesh
 		for y_i in 0..image_height - 1 {
 			for x_i in 0..image_width - 1 {
 				triangles.push(three_points_to_triangle([
 					point_cloud.vertices[y_i * image_width + x_i],
-					point_cloud.vertices[(y_i + 1) * image_width + x_i],
 					point_cloud.vertices[(y_i + 1) * image_width + x_i + 1],
+					point_cloud.vertices[(y_i + 1) * image_width + x_i],
 				])?);
 				triangles.push(three_points_to_triangle([
 					point_cloud.vertices[y_i * image_width + x_i],
-					point_cloud.vertices[(y_i + 1) * image_width + x_i + 1],
 					point_cloud.vertices[y_i * image_width + x_i + 1],
+					point_cloud.vertices[(y_i + 1) * image_width + x_i + 1],
 				])?);
 			}
 		}
@@ -240,7 +242,7 @@ fn cross_product(a: Vec3, b: Vec3) -> Vec3 {
 	[a.y * b.z - b.y * a.z, a.z * b.x - b.z * a.x, a.x * b.y - b.x * a.y].into()
 }
 
-/// Will return None if the vector has no length
+/// Will return Err if the vector has no length
 fn normalize_to_unit_vector(v: Vec3) -> Result<Vec3, InvalidPointsError> {
 	let length = (v.x * v.x + v.y * v.y + v.z * v.z).sqrt();
 	if length == 0.0 {
