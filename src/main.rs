@@ -2,7 +2,7 @@ use std::{fs::OpenOptions, io::Write, process::ExitCode};
 
 use clap::Parser;
 
-use lithophane_creator::lithophane::generate_lithophane;
+use lithophane_generator::lithophane::generate_lithophane;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about)]

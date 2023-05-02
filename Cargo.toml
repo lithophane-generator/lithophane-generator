@@ -1,5 +1,5 @@
 [package]
-name = "lithophane-creator"
+name = "lithophane-generator"
 version = "0.1.0"
 edition = "2021"
 
