@@ -6,7 +6,14 @@ use pk_stl::{
 use thiserror::Error;
 
 /// Create a lithophane using three functions to translate x and y coordinates from an image into x,y,z coordinates for a mesh
-pub fn generate_lithophane<F: Fn(f32, f32, f32, f32) -> f32>(x_fn: F, y_fn: F, z_fn: F, image: GrayImage, white_depth: f32, black_depth: f32) -> Result<StlModel, InvalidPointsError> {
+pub fn generate_lithophane<F: Fn(f32, f32, f32, f32) -> f32>(
+	x_fn: F,
+	y_fn: F,
+	z_fn: F,
+	image: GrayImage,
+	white_depth: f32,
+	black_depth: f32,
+) -> Result<StlModel, InvalidPointsError> {
 	let point_cloud = generate_point_cloud(x_fn, y_fn, z_fn, image.width(), image.height(), 1)?;
 	let mesh = generate_lithophane_mesh(point_cloud, image, white_depth, black_depth)?;
 	Ok(StlModel {
@@ -17,7 +24,14 @@ pub fn generate_lithophane<F: Fn(f32, f32, f32, f32) -> f32>(x_fn: F, y_fn: F, z
 
 /// Create a flat preview mesh using three functions to translate x and y coordinates from an image into x,y,z coordinates for the mesh
 /// The step argument allows stepping by that many vertices at a time, generating a lower resolution preview in a shorter amount of time
-pub fn generate_preview<F: Fn(f32, f32, f32, f32) -> f32>(x_fn: F, y_fn: F, z_fn: F, width: u32, height: u32, step: u32) -> Result<StlModel, InvalidPointsError> {
+pub fn generate_preview<F: Fn(f32, f32, f32, f32) -> f32>(
+	x_fn: F,
+	y_fn: F,
+	z_fn: F,
+	width: u32,
+	height: u32,
+	step: u32,
+) -> Result<StlModel, InvalidPointsError> {
 	let point_cloud = generate_point_cloud(x_fn, y_fn, z_fn, width, height, step)?;
 
 	let width_usize = point_cloud.width as usize;
@@ -57,7 +71,14 @@ struct PointCloud {
 }
 
 /// Generates a point cloud from a set of equations
-fn generate_point_cloud<F: Fn(f32, f32, f32, f32) -> f32>(x_fn: F, y_fn: F, z_fn: F, width: u32, height: u32, step: u32) -> Result<PointCloud, InvalidPointsError> {
+fn generate_point_cloud<F: Fn(f32, f32, f32, f32) -> f32>(
+	x_fn: F,
+	y_fn: F,
+	z_fn: F,
+	width: u32,
+	height: u32,
+	step: u32,
+) -> Result<PointCloud, InvalidPointsError> {
 	// Generate vertices with an extra border that will be used to calculate normals
 	let mut vertices = Vec::with_capacity((width as usize + 2) * (height as usize + 2));
 
@@ -81,7 +102,7 @@ fn generate_point_cloud<F: Fn(f32, f32, f32, f32) -> f32>(x_fn: F, y_fn: F, z_fn
 		if (length - 1) % step != 0 {
 			v.push(length_i64 - 1);
 		}
-		v.push((length_i64 - 1) * 2 - v[v.len()-2]);
+		v.push((length_i64 - 1) * 2 - v[v.len() - 2]);
 
 		v
 	}
@@ -138,7 +159,12 @@ fn generate_point_cloud<F: Fn(f32, f32, f32, f32) -> f32>(x_fn: F, y_fn: F, z_fn
 	})
 }
 
-fn generate_lithophane_mesh(point_cloud: PointCloud, image: GrayImage, white_depth: f32, black_depth: f32) -> Result<Vec<Triangle>, InvalidPointsError> {
+fn generate_lithophane_mesh(
+	point_cloud: PointCloud,
+	image: GrayImage,
+	white_depth: f32,
+	black_depth: f32,
+) -> Result<Vec<Triangle>, InvalidPointsError> {
 	let width = point_cloud.width as usize;
 	let height = point_cloud.height as usize;
 

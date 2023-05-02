@@ -20,7 +20,7 @@ pub fn generate_lithophane(
 	white_depth: f32,
 	black_depth: f32,
 ) -> Result<Vec<u8>, JsError> {
-	let image = image::io::Reader::new(Cursor::new(image)).with_guessed_format().map_err(|e| ImageError::IoError(e))?.decode()?;
+	let image = image::io::Reader::new(Cursor::new(image)).with_guessed_format().map_err(ImageError::IoError)?.decode()?;
 
 	let x_expression =
 		x_expression.parse::<meval::Expr>().and_then(|e| e.bind4("x", "y", "w", "h")).map_err(|e| Error::MevalError("x".to_string(), e))?;
@@ -40,18 +40,12 @@ pub fn generate_lithophane(
 		image.into_luma8(),
 		white_depth,
 		black_depth,
-	)?.as_binary())
+	)?
+	.as_binary())
 }
 
 #[wasm_bindgen]
-pub fn generate_preview(
-	x_expression: &str,
-	y_expression: &str,
-	z_expression: &str,
-	width: u32,
-	height: u32,
-	step: u32,
-) -> Result<Vec<u8>, JsError> {
+pub fn generate_preview(x_expression: &str, y_expression: &str, z_expression: &str, width: u32, height: u32, step: u32) -> Result<Vec<u8>, JsError> {
 	let x_expression =
 		x_expression.parse::<meval::Expr>().and_then(|e| e.bind4("x", "y", "w", "h")).map_err(|e| Error::MevalError("x".to_string(), e))?;
 	let y_expression =
@@ -70,7 +64,8 @@ pub fn generate_preview(
 		width,
 		height,
 		step,
-	)?.as_binary())
+	)?
+	.as_binary())
 }
 
 #[derive(Error, Debug)]
@@ -80,11 +75,12 @@ pub enum Error {
 }
 
 #[wasm_bindgen]
-pub fn get_image_dimensions(
-	image: Vec<u8>,
-) -> Result<ImageDimensions, JsError> {
-	let image = image::io::Reader::new(Cursor::new(image)).with_guessed_format().map_err(|e| ImageError::IoError(e))?.decode()?;
-	Ok(ImageDimensions { width: image.width(), height: image.height() })
+pub fn get_image_dimensions(image: Vec<u8>) -> Result<ImageDimensions, JsError> {
+	let image = image::io::Reader::new(Cursor::new(image)).with_guessed_format().map_err(ImageError::IoError)?.decode()?;
+	Ok(ImageDimensions {
+		width: image.width(),
+		height: image.height(),
+	})
 }
 
 #[wasm_bindgen]
