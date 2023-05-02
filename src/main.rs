@@ -2,7 +2,7 @@ use std::{fs::OpenOptions, io::Write, process::ExitCode};
 
 use clap::Parser;
 
-use lithophane_creator::lithophane::LithophaneGenerator;
+use lithophane_creator::lithophane::generate_lithophane;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about)]
@@ -61,16 +61,14 @@ fn main() -> ExitCode {
 		move |x: f32, y: f32, w: f32, h: f32| -> f32 { f(x as f64, y as f64, w as f64, h as f64) as f32 }
 	}
 
-	let lithophane_generator = LithophaneGenerator::new(
+	let lithophane = match generate_lithophane(
 		meval_f32_wrapper(x_expression),
 		meval_f32_wrapper(y_expression),
 		meval_f32_wrapper(z_expression),
 		image.into_luma8(),
 		0.5,
 		3.0,
-	);
-
-	let lithophane = match lithophane_generator.generate_lithophane() {
+	) {
 		Ok(l) => l,
 		Err(e) => {
 			eprintln!("Error generating lithophane: {}", e);

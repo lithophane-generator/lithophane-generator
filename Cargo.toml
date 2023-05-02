@@ -11,7 +11,11 @@ image = {version = "0.24.5", default-features = false, features = ["jpeg", "png"
 pk_stl = "0.3.0"
 meval = "0.2.0"
 thiserror = "1.0.37"
-wasm-bindgen = "0.2.83"
+wasm-bindgen = "0.2.84"
+console_error_panic_hook = "^0.1.7"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
+
+[profile.release]
+opt-level = "s"
